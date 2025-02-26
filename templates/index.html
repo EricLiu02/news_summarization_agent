@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Personalized News Summarizer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --accent-color: #f72585;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --success-color: #4cc9f0;
+            --warning-color: #f77f00;
+            --danger-color: #e63946;
+            --gray-color: #adb5bd;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f9fa;
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        header h1 {
+            margin-bottom: 0.5rem;
+            font-size: 2.5rem;
+            font-weight: 600;
+        }
+        
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .app-container {
+            padding: 2rem 0;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            padding: 2rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card h2 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .settings-card {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        }
+        
+        .action-card {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+        
+        .btn:hover {
+            background-color: var(--secondary-color);
+            transform: scale(1.05);
+        }
+        
+        .btn-lg {
+            padding: 1rem 2.5rem;
+            font-size: 1.2rem;
+        }
+        
+        .btn-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-accent {
+            background-color: var(--accent-color);
+        }
+        
+        .btn-accent:hover {
+            background-color: #e5267b;
+        }
+        
+        .btn-success {
+            background-color: var(--success-color);
+        }
+        
+        .btn-success:hover {
+            background-color: #3db1d8;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--gray-color);
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+        
+        .section-checkboxes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem 1.5rem;
+            margin: 0.5rem 0;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .checkbox-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary-color);
+        }
+        
+        .hint-text {
+            font-size: 0.85rem;
+            color: var(--gray-color);
+            margin-top: 0.5rem;
+        }
+        
+        .headlines-list {
+            margin-top: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .headline-item {
+            padding: 1rem;
+            border-left: 4px solid var(--primary-color);
+            background-color: #f8f9fa;
+            border-radius: 0 10px 10px 0;
+        }
+        
+        .headline-section {
+            font-weight: 600;
+            color: var(--primary-color);
+            font-size: 0.9rem;
+            margin-bottom: 0.3rem;
+        }
+        
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 2rem 0;
+        }
+        
+        .spinner {
+            width: 25px;
+            height: 25px;
+            border: 3px solid rgba(0, 0, 0, 0.1);
+            border-top-color: var(--primary-color);
+            border-radius: 50%;
+            animation: spinner 0.8s linear infinite;
+        }
+        
+        @keyframes spinner {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        .report-container {
+            margin-top: 1.5rem;
+            line-height: 1.8;
+        }
+        
+        .report-container h3 {
+            color: var(--primary-color);
+            margin: 1.5rem 0 0.8rem 0;
+        }
+        
+        .audio-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        
+        .audio-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: var(--primary-color);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .audio-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .audio-controls .fa-play, 
+        .audio-controls .fa-pause,
+        .audio-controls .fa-spinner {
+            font-size: 1.5rem;
+        }
+        
+        /* Debug audio controls */
+        .debug-controls {
+            margin-top: 10px;
+            text-align: center;
+            display: none; /* Hidden by default, set to flex to show */
+        }
+        
+        .debug-btn {
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            padding: 5px 10px;
+            margin: 0 5px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .last-updated {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: var(--gray-color);
+            font-size: 0.9rem;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 2rem 0;
+            color: var(--gray-color);
+            font-size: 0.9rem;
+        }
+        
+        @media (min-width: 768px) {
+            .cards-container {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1><i class="fas fa-newspaper"></i> Your Personalized News Summarizer</h1>
+            <p>Stay informed with AI-powered news analysis and summaries</p>
+        </div>
+    </header>
+
+    <div class="container app-container">
+        <div class="cards-container">
+            <div class="card settings-card">
+                <h2><i class="fas fa-user-circle"></i> Personalize Your Experience</h2>
+                <form id="preferences-form">
+                    <div class="form-group">
+                        <label for="user_name">Your Name</label>
+                        <input type="text" id="user_name" name="user_name" class="form-control" placeholder="Enter your name" value="{{ user_name }}">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>News Sections</label>
+                        <div class="section-checkboxes">
+                                                        <div class="checkbox-item">
+                                <input type="checkbox" id="section-world" name="sections" value="world" {% if 'world' in selected_sections %}checked{% endif %}>
+                                <label for="section-world">World</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="section-business" name="sections" value="business" {% if 'business' in selected_sections %}checked{% endif %}>
+                                <label for="section-business">Business</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="section-technology" name="sections" value="technology" {% if 'technology' in selected_sections %}checked{% endif %}>
+                                <label for="section-technology">Technology</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="section-science" name="sections" value="science" {% if 'science' in selected_sections %}checked{% endif %}>
+                                <label for="section-science">Science</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="section-health" name="sections" value="health" {% if 'health' in selected_sections %}checked{% endif %}>
+                                <label for="section-health">Health</label>
+                            </div>
+                        </div>
+                        <p class="hint-text">Select the sections you want to hear headlines from.</p>
+                    </div>
+                    
+                    <button type="submit" class="btn">Save Preferences</button>
+                </form>
+            </div>
+            
+            <div class="card action-card">
+                <button id="headlines-btn" class="btn btn-circle btn-accent">
+                    <i class="fas fa-headphones" style="font-size: 3rem;"></i>
+                </button>
+                <h2>Listen to Headlines</h2>
+                <p>Hear today's top headlines read aloud by your personal news assistant</p>
+            </div>
+        </div>
+        
+        <div class="card" id="headlines-card" style="display: none;">
+            <h2><i class="fas fa-newspaper"></i> Today's Top Headlines</h2>
+            <div id="headlines-loading" class="loading">
+                <div class="spinner"></div>
+                <p>Fetching headlines...</p>
+            </div>
+            <div id="headlines-content" style="display: none;">
+                <div class="audio-controls">
+                    <button id="headlines-play" class="audio-btn">
+                        <i class="fas fa-play"></i>
+                    </button>
+                </div>
+                
+                <!-- Debug controls removed -->
+                <div class="headlines-list" id="headlines-list">
+                    <!-- Headlines will be populated here -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Report section removed as requested -->
+        
+        <p class="last-updated" id="last-updated"></p>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>Powered by NYT API, Claude AI, and ElevenLabs | © 2025 News Summarization Agent</p>
+        </div>
+    </footer>
+
+    <audio id="headlines-audio" style="display: none;" preload="auto"></audio>
+
+    <script>
+        // DOM elements
+        const preferencesForm = document.getElementById('preferences-form');
+        const headlinesBtn = document.getElementById('headlines-btn');
+        const headlinesCard = document.getElementById('headlines-card');
+        const headlinesList = document.getElementById('headlines-list');
+        const lastUpdated = document.getElementById('last-updated');
+        
+        // Loading elements
+        const headlinesLoading = document.getElementById('headlines-loading');
+        const headlinesContent = document.getElementById('headlines-content');
+        
+        // Audio elements
+        const headlinesAudio = document.getElementById('headlines-audio');
+        const headlinesPlay = document.getElementById('headlines-play');
+        
+        // Save user preferences
+        preferencesForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(preferencesForm);
+            
+            // Get selected sections and add to formData
+            const selectedSections = [];
+            document.querySelectorAll('input[name="sections"]:checked').forEach(checkbox => {
+                selectedSections.push(checkbox.value);
+            });
+            
+            // Remove existing sections entries
+            formData.delete('sections');
+            
+            // Add each selected section individually
+            selectedSections.forEach(section => {
+                formData.append('sections', section);
+            });
+            
+            fetch('/update_preferences', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert('Preferences saved successfully!');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to save preferences.');
+            });
+        });
+        
+        // Get news headlines only
+        headlinesBtn.addEventListener('click', function() {
+            // Show the headlines card
+            headlinesCard.style.display = 'block';
+            
+            // Show loading state
+            headlinesLoading.style.display = 'flex';
+            headlinesContent.style.display = 'none';
+            
+            // Fetch news data
+            fetch('/get_news')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        // Update last updated time
+                        const updatedDate = new Date(data.last_updated);
+                        lastUpdated.textContent = `Last updated: ${updatedDate.toLocaleString()}`;
+                        
+                        // Process headlines
+                        processHeadlines(data.analysis);
+                        
+                        // Don't automatically load audio, wait for user to click play
+                        console.log('Headlines loaded, waiting for user to press play');
+                        
+                        // Reset audio state
+                        if (headlinesAudio.src) {
+                            URL.revokeObjectURL(headlinesAudio.src);
+                            headlinesAudio.src = '';
+                        }
+                        headlinesPlay.innerHTML = '<i class="fas fa-play"></i>';
+                    } else {
+                        alert('Failed to fetch news: ' + data.message);
+                        headlinesLoading.style.display = 'none';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Failed to fetch news data.');
+                    headlinesLoading.style.display = 'none';
+                });
+        });
+        
+        // Process headlines data
+        function processHeadlines(analysis) {
+            headlinesList.innerHTML = '';
+            
+            // Get selected sections
+            const selectedSections = [];
+            document.querySelectorAll('input[name="sections"]:checked').forEach(checkbox => {
+                selectedSections.push(checkbox.value.toLowerCase());
+            });
+            
+            console.log("Selected sections:", selectedSections);
+            
+            // Group headlines by section
+            const sections = analysis.sections;
+            
+            for (const section in sections) {
+                // Skip if section not selected by user
+                if (!selectedSections.includes(section.toLowerCase())) {
+                    console.log(`Skipping section ${section}: not selected by user`);
+                    continue;
+                }
+                
+                const sectionData = sections[section];
+                
+                // Skip if section data doesn't exist
+                if (!sectionData || !sectionData.recent_headlines) {
+                    console.log(`Skipping section ${section}: missing data`);
+                    continue;
+                }
+                
+                // Get top 3 headlines, filtering out empty strings and null values
+                const headlines = sectionData.recent_headlines
+                    .filter(headline => headline && headline.trim() !== '')
+                    .slice(0, 3);
+                
+                // Only process sections that have headlines
+                if (headlines && headlines.length > 0) {
+                    console.log(`Processing section ${section} with ${headlines.length} headlines`);
+                    
+                    headlines.forEach(headline => {
+                        if (!headline || headline.trim() === '') {
+                            return; // Skip empty headlines
+                        }
+                        
+                        const headlineItem = document.createElement('div');
+                        headlineItem.className = 'headline-item';
+                        
+                        const sectionElement = document.createElement('div');
+                        sectionElement.className = 'headline-section';
+                        sectionElement.textContent = section.toUpperCase();
+                        
+                        const headlineText = document.createElement('div');
+                        headlineText.textContent = headline;
+                        
+                        headlineItem.appendChild(sectionElement);
+                        headlineItem.appendChild(headlineText);
+                        headlinesList.appendChild(headlineItem);
+                    });
+                } else {
+                    console.log(`Skipping section ${section}: no valid headlines`);
+                }
+            }
+            
+            // Hide loading, show content
+            headlinesLoading.style.display = 'none';
+            headlinesContent.style.display = 'block';
+        }
+        
+        // Load headlines audio
+        function loadHeadlinesAudio() {
+            // Show loading indicator
+            headlinesPlay.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            
+            console.log('Fetching audio from server...');
+            fetch('/get_headlines_audio')
+                .then(response => {
+                    console.log('Response received, status:', response.status);
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.status === 'success' && data.audio) {
+                        console.log('Audio data received successfully, length:', data.audio.length);
+                        
+                        try {
+                            // Convert base64 to blob
+                            const audioBlob = base64ToBlob(data.audio, 'audio/mpeg');
+                            console.log('Audio blob created, size:', audioBlob.size);
+                            
+                            const audioUrl = URL.createObjectURL(audioBlob);
+                            console.log('Audio URL created:', audioUrl);
+                            
+                            // Set audio source
+                            console.log('Setting audio source...');
+                            headlinesAudio.src = audioUrl;
+                            
+                            // Add event listeners to track loading states
+                            headlinesAudio.addEventListener('loadstart', () => console.log('Audio loading started'));
+                            headlinesAudio.addEventListener('progress', () => console.log('Audio download in progress'));
+                            headlinesAudio.addEventListener('canplay', () => console.log('Audio can start playing'));
+                            headlinesAudio.addEventListener('error', (e) => console.error('Audio element error:', e));
+                            
+                            // Force loading of audio
+                            console.log('Forcing audio to load...');
+                            headlinesAudio.load();
+                            console.log('Audio load method called');
+                            
+                            // Show debug info
+                            console.log('Audio script:', data.script);
+                        } catch (error) {
+                            console.error('Error setting up audio:', error);
+                            alert('Error setting up audio: ' + error.message);
+                            headlinesPlay.innerHTML = '<i class="fas fa-play"></i>';
+                        }
+                    } else {
+                        console.error('Failed to load headlines audio:', data.message);
+                        alert('Error generating audio: ' + (data.message || 'Unknown error'));
+                        headlinesPlay.innerHTML = '<i class="fas fa-play"></i>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading headlines audio:', error);
+                    alert('Error loading audio: ' + error.message);
+                    headlinesPlay.innerHTML = '<i class="fas fa-play"></i>';
+                });
+        }
+        
+        // Play headlines audio
+        headlinesPlay.addEventListener('click', function() {
+            console.log('Play button clicked');
+            
+            // If audio source is not yet set, load it first
+            if (!headlinesAudio.src) {
+                console.log('Audio source not set yet, loading audio...');
+                
+                // Show loading spinner
+                headlinesPlay.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                
+                // Load the audio
+                loadHeadlinesAudio();
+                
+                // Add one-time event listener to play audio when loaded
+                headlinesAudio.addEventListener('loadeddata', function playWhenReady() {
+                    console.log('Audio loaded, starting playback...');
+                    
+                    // Try playing the audio
+                    try {
+                        let playPromise = headlinesAudio.play();
+                        
+                        if (playPromise !== undefined) {
+                            playPromise.then(() => {
+                                console.log('Audio playback started successfully');
+                                headlinesPlay.innerHTML = '<i class="fas fa-pause"></i>';
+                            }).catch(error => {
+                                console.error('Error playing audio:', error);
+                                alert('Error playing audio: ' + error.message);
+                                headlinesPlay.innerHTML = '<i class="fas fa-play"></i>';
+                            });
+                        }
+                    } catch (e) {
+                        console.error('Exception playing audio:', e);
+                        alert('Error playing audio: ' + e.message);
+                        headlinesPlay.innerHTML = '<i class="fas fa-play"></i>';
+                    }
+                }, { once: true });
+                
+                return;
+            }
+            
+            // Normal play/pause toggle
+            if (headlinesAudio.paused) {
+                console.log('Playing audio...');
+                
+                try {
+                    let playPromise = headlinesAudio.play();
+                    
+                    if (playPromise !== undefined) {
+                        playPromise.then(() => {
+                            console.log('Audio playback started successfully');
+                            headlinesPlay.innerHTML = '<i class="fas fa-pause"></i>';
+                        }).catch(error => {
+                            console.error('Error playing audio:', error);
+                            alert('Error playing audio: ' + error.message);
+                            headlinesPlay.innerHTML = '<i class="fas fa-play"></i>';
+                        });
+                    }
+                } catch (e) {
+                    console.error('Exception playing audio:', e);
+                    alert('Error playing audio: ' + e.message);
+                    headlinesPlay.innerHTML = '<i class="fas fa-play"></i>';
+                }
+            } else {
+                console.log('Pausing audio...');
+                headlinesAudio.pause();
+                headlinesPlay.innerHTML = '<i class="fas fa-play"></i>';
+            }
+        });
+        
+        // When headlines audio ends
+        headlinesAudio.addEventListener('ended', function() {
+            headlinesPlay.innerHTML = '<i class="fas fa-play"></i>';
+        });
+        
+        // Helper function to convert base64 to blob
+        function base64ToBlob(base64, mimeType) {
+            const byteCharacters = atob(base64);
+            const byteArrays = [];
+            
+            for (let offset = 0; offset < byteCharacters.length; offset += 512) {
+                const slice = byteCharacters.slice(offset, offset + 512);
+                
+                const byteNumbers = new Array(slice.length);
+                for (let i = 0; i < slice.length; i++) {
+                    byteNumbers[i] = slice.charCodeAt(i);
+                }
+                
+                const byteArray = new Uint8Array(byteNumbers);
+                byteArrays.push(byteArray);
+            }
+            
+            return new Blob(byteArrays, { type: mimeType });
+        }
+        
+        // Removed debug controls functionality
+    </script>
+</body>
+</html>
